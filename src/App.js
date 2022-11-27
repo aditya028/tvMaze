@@ -1,25 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import Main from "./components/main";
+import MovieDetail from "./components/movieDetail";
+import { createBrowserRouter, RouterProvider, Route } from "react-router-dom";
+import { useState, useEffect } from "react";
+import Form from "./components/form";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  const [data, setData] = useState([]);
+  const endPoint = "https://api.tvmaze.com/search/shows?q=all";
+
+  useEffect(() => {
+    fetch(endPoint)
+      .then((res) => res.json())
+      .then((json) => {
+        setData(json);
+      });
+  });
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <Main data={data} />,
+    },
+    {
+      path: "/:id",
+      element: <MovieDetail movies={data} />,
+    },
+    {
+      path: "/form/:id",
+      element: <Form movies={data} />,
+    },
+  ]);
+  return <RouterProvider router={router} />;
 }
 
 export default App;
